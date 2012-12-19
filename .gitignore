@@ -4,3 +4,4 @@ Makefile
 *.xml
 /Pop3Retriever
 *.mbox
+/*.patch
