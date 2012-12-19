@@ -1,0 +1,5 @@
+*.[ao]
+moc_*
+Makefile
+*.xml
+/Pop3Retriever
