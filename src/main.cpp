@@ -12,7 +12,7 @@ using namespace std;
 #define _ERROR(s) {cerr << (s) << endl; return false;}
 bool HandleAccount(Pop3RetrieveAccount& account)
 {
-	Pop3Client client(false);
+	Pop3Client client(false, account.useSsl);
 	Store msgStore(account.targetFolder,account.storePattern);
 	
 	if (!client.Connect(account.host,account.port))

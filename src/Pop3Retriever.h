@@ -14,6 +14,7 @@ typedef struct Pop3RetrieveAccount_t
 	QString targetFolder;
 	QString storePattern;
 	int daysOnServer;
+	bool useSsl;
 } Pop3RetrieveAccount;
 
 class Pop3RetrieveConfig
@@ -24,6 +25,15 @@ class Pop3RetrieveConfig
 	protected:
 		Pop3RetrieveAccount parseAccountElement(QDomElement& account);
 		void addAccountProperty(QDomDocument& ddoc, QDomElement& account, QString propertyName, QString propertyValue);
+	protected:
+		static QString getCanonicalValue(const QString& string)
+		{
+			return string.toLower().trimmed();
+		}
+		static QString getCanonicalValue(const QDomElement& el)
+		{
+			return getCanonicalValue(el.text());
+		}
 	public:
 		bool LoadFromFile(QString filename);
 		bool SaveToFile(QString filename);

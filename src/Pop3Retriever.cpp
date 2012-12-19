@@ -44,6 +44,10 @@ Pop3RetrieveAccount Pop3RetrieveConfig::parseAccountElement(QDomElement& account
 	acc.storePattern = el.text();
 	el = account.firstChildElement("DaysOnServer");
 	acc.daysOnServer = el.text().toInt();
+
+	el = account.firstChildElement("UseSsl");
+	QString canonicalValue = getCanonicalValue(el);
+	acc.useSsl = (canonicalValue == "true" || canonicalValue == "y" || canonicalValue == "yes" || canonicalValue == "1");
 	return acc;
 }
 

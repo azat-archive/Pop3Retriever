@@ -2,12 +2,15 @@
 #include <iostream>
 #include <QtDebug>
 
-#define _ERROR(s) std::cerr << s << m_sock.errorString().toStdString() << std::endl
-Pop3Client::Pop3Client(bool readOnly)
+#define _ERROR(s) std::cerr << s << m_sock->errorString().toStdString() << std::endl
+Pop3Client::Pop3Client(bool readOnly, bool useSsl)
 {
 	this->readOnly = readOnly;
+	this->useSsl = useSsl;
 	state = NotConnected;
-	m_sock.blockSignals(true);
+
+	m_sock = (useSsl ? new QSslSocket : new QTcpSocket);
+	m_sock->blockSignals(true);
 }
 
 void Pop3Client::SetReadOnly(bool readOnly)
@@ -17,8 +20,15 @@ void Pop3Client::SetReadOnly(bool readOnly)
 
 bool Pop3Client::Connect(QString host,short unsigned int port)
 {
-	m_sock.connectToHost(host,port);
-	if (!m_sock.waitForConnected(CONNECT_TIMEOUT))
+	if (this->useSsl)
+	{
+		qobject_cast<QSslSocket *>(m_sock)->connectToHostEncrypted(host,port);
+	}
+	else
+	{
+		m_sock->connectToHost(host,port);
+	}
+	if (!m_sock->waitForConnected(CONNECT_TIMEOUT))
 	{
 		_ERROR("Could not connect: ");
 		return false;
@@ -37,9 +47,9 @@ QString Pop3Client::doCommand(QString command,bool isMultiline)
 {
 //	qDebug() << "sending command: " << command << "\n";
 	QString response;
-	qint64 writeResult = m_sock.write(command.toAscii());
+	qint64 writeResult = m_sock->write(command.toAscii());
 	if (writeResult != command.size()) _ERROR("Could not write all bytes: ");
-	if (writeResult > 0 && !m_sock.waitForBytesWritten(WRITE_TIMEOUT)) _ERROR("Could not write bytes from buffer: ");
+	if (writeResult > 0 && !m_sock->waitForBytesWritten(WRITE_TIMEOUT)) _ERROR("Could not write bytes from buffer: ");
 	if (!ReadResponse(isMultiline,response))
 		return "";
 	return response;
@@ -48,7 +58,7 @@ QString Pop3Client::doCommand(QString command,bool isMultiline)
 bool Pop3Client::ReadResponse(bool isMultiline,QString& response)
 {
 	char buff[1512+1]; // according to RFC1939 the response can only be 512 chars
-	bool couldRead = m_sock.waitForReadyRead( READ_TIMEOUT ) ;
+	bool couldRead = m_sock->waitForReadyRead( READ_TIMEOUT ) ;
 	if (!couldRead) _ERROR("could not receive data: ");
 	bool complete=false;
 	bool completeLine=false;
@@ -61,7 +71,7 @@ bool Pop3Client::ReadResponse(bool isMultiline,QString& response)
 			qDebug() << "avoiding buffer overflow, server is not RFC1939 compliant\n";
 			return false;
 		}
-		qint64 bytesRead = m_sock.readLine(buff + offset,sizeof(buff)-offset);
+		qint64 bytesRead = m_sock->readLine(buff + offset,sizeof(buff)-offset);
 		if (bytesRead == -1)
 			return false;
 		couldRead = bytesRead > 0;
@@ -101,10 +111,10 @@ bool Pop3Client::ReadResponse(bool isMultiline,QString& response)
 		}
 		if (couldRead && !complete)
 		{
-			if (m_sock.bytesAvailable() <= 0)
+			if (m_sock->bytesAvailable() <= 0)
 			{
 //		qDebug() << "waiting for data\n";
-				couldRead = m_sock.waitForReadyRead( READ_TIMEOUT ) ;
+				couldRead = m_sock->waitForReadyRead( READ_TIMEOUT ) ;
 //		qDebug() << "waiting for data finished, couldread: " << couldRead << "\n";
 			}
 		}
@@ -145,7 +155,7 @@ bool Pop3Client::Quit()
 	QString res = doCommand("QUIT\r\n",false);
 	if (res.startsWith("+OK"))
 	{
-		if (!m_sock.waitForDisconnected(DISCONNECT_TIMEOUT))
+		if (!m_sock->waitForDisconnected(DISCONNECT_TIMEOUT))
 		{
 			_ERROR("Connection was not closed by server: ");
 			return false;
