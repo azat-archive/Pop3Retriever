@@ -20,6 +20,9 @@ void Pop3Client::SetReadOnly(bool readOnly)
 
 bool Pop3Client::Connect(QString host,short unsigned int port)
 {
+	if (state == Authorization)
+		return true;
+
 	if (this->useSsl)
 	{
 		qobject_cast<QSslSocket *>(m_sock)->connectToHostEncrypted(host,port);
@@ -124,6 +127,9 @@ bool Pop3Client::ReadResponse(bool isMultiline,QString& response)
 
 bool Pop3Client::Login(QString user, QString pwd)
 {
+	if (state == Transaction)
+		return true;
+
 	if (!SendUser(user))
 		return false;
 	if (!SendPasswd(pwd))
