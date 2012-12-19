@@ -7,6 +7,9 @@ TARGET +=
 DEPENDPATH += .
 INCLUDEPATH += .
 
+QMAKE_CXXFLAGS += -g -std=c++0x -rdynamic -Wall
+QMAKE_LFLAGS += -g -rdynamic -Wall
+
 # Input
 HEADERS += src/*.h 
 SOURCES += src/*.cpp
