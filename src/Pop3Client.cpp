@@ -24,13 +24,10 @@ bool Pop3Client::Connect(QString host,short unsigned int port)
 		return true;
 
 	if (this->useSsl)
-	{
 		qobject_cast<QSslSocket *>(m_sock)->connectToHostEncrypted(host,port);
-	}
 	else
-	{
 		m_sock->connectToHost(host,port);
-	}
+
 	if (!m_sock->waitForConnected(CONNECT_TIMEOUT))
 	{
 		_ERROR("Could not connect: ");
