@@ -20,7 +20,7 @@ bool HandleAccount(Pop3RetrieveAccount& account)
 	if (!client.Login(account.user,account.pwd))
 		_ERROR("could not login")
 	
-	QVector< QPair<QString,QString> > uIds; //list with <msgId, uniqueId>
+	QVector< Pop3Client::UniqueId > uIds; //list with <msgId, uniqueId>
 	if (!client.GetUniqueIdList(uIds))
 		_ERROR("could not get uniqueId Listing")
 	

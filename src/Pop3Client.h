@@ -15,14 +15,18 @@
 
 class Pop3Client
 {
-	enum Pop3ConnectionState
+	public:
+		typedef QPair<QString, QString> UniqueId;
+		typedef QPair<QString, int> MessageId;
+
+	private:
+		enum Pop3ConnectionState
 		{
 			NotConnected,
 			Authorization,
 			Transaction,
 			Update
 		};
-	private:
 		
 		QTcpSocket *m_sock;
 		Pop3ConnectionState state;
@@ -34,8 +38,8 @@ class Pop3Client
 		bool ReadResponse(bool isMultiline,QString& response);
 		bool SendUser(QString& user);
 		bool SendPasswd(QString& pwd);
-		static QPair<QString,QString> parseUniqueIdListing(QString& line);
-		static QPair<QString,int> parseMsgIdListing(QString& line);
+		static UniqueId parseUniqueIdListing(QString& line);
+		static MessageId parseMsgIdListing(QString& line);
 		
 	protected:
 	
@@ -49,10 +53,10 @@ class Pop3Client
 		bool GetMailboxStatus(int& nbMessages, int& totalSize);
 		bool ResetDeleted();
 		bool NoOperation();
-		bool GetUniqueIdList(QVector< QPair<QString,QString> >& uIdList);
-		bool GetUniqueIdList(QString msgId, QPair<QString,QString>& uIdList);
-		bool GetMsgList(QVector< QPair<QString,int> >& uIdList);
-		bool GetMsgList(QString msgId, QPair<QString,int>& uIdList);
+		bool GetUniqueIdList(QVector< UniqueId >& uIdList);
+		bool GetUniqueIdList(QString msgId, UniqueId& uIdList);
+		bool GetMsgList(QVector< MessageId >& uIdList);
+		bool GetMsgList(QString msgId, MessageId& uIdList);
 		bool Delete(QString msgId);
 		bool GetMessageTop(QString msgId, int nbLines, QString& msgTop);
 		bool GetMessage(QString msgId, QString& msg);

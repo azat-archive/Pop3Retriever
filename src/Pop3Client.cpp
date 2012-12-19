@@ -203,23 +203,23 @@ bool Pop3Client::NoOperation()
 	else
 		return false;
 }
-QPair<QString,QString> Pop3Client::parseUniqueIdListing(QString& line)
+Pop3Client::UniqueId Pop3Client::parseUniqueIdListing(QString& line)
 {
-	QPair<QString,QString> p;
+	UniqueId p;
 	QStringList sl = line.split(' ',QString::SkipEmptyParts);
 	p.first = sl[0];
 	p.second = sl[1];
 	return p;
 }
-QPair<QString,int> Pop3Client::parseMsgIdListing(QString& line)
+Pop3Client::MessageId Pop3Client::parseMsgIdListing(QString& line)
 {
-	QPair<QString,int> p;
+	MessageId p;
 	QStringList sl = line.split(' ',QString::SkipEmptyParts);
 	p.first = sl[0];
 	p.second = sl[1].toInt();
 	return p;
 }
-bool Pop3Client::GetUniqueIdList(QVector< QPair<QString,QString> >& uIdList)
+bool Pop3Client::GetUniqueIdList(QVector< UniqueId >& uIdList)
 {
 	QString res = doCommand("UIDL\r\n",true);
 	if (res.startsWith("+OK"))
@@ -233,7 +233,7 @@ bool Pop3Client::GetUniqueIdList(QVector< QPair<QString,QString> >& uIdList)
 	else
 		return false;
 }
-bool Pop3Client::GetUniqueIdList(QString msgId, QPair<QString,QString>& uIdList)
+bool Pop3Client::GetUniqueIdList(QString msgId, UniqueId& uIdList)
 {
 	QString res = doCommand("UIDL "+msgId+"\r\n",false);
 	if (res.startsWith("+OK"))
@@ -283,7 +283,7 @@ bool Pop3Client::GetMessage(QString msgId, QString& msg)
 		return false;
 	}
 }
-bool Pop3Client::GetMsgList(QVector< QPair<QString,int> >& uIdList)
+bool Pop3Client::GetMsgList(QVector< MessageId >& uIdList)
 {
 	QString res = doCommand("LIST\r\n",true);
 	if (res.startsWith("+OK"))
@@ -297,7 +297,7 @@ bool Pop3Client::GetMsgList(QVector< QPair<QString,int> >& uIdList)
 	else
 		return false;
 }
-bool Pop3Client::GetMsgList(QString msgId, QPair<QString,int>& uIdList)
+bool Pop3Client::GetMsgList(QString msgId, MessageId& uIdList)
 {
 	QString res = doCommand("LIST "+msgId+"\r\n",false);
 	if (res.startsWith("+OK"))
