@@ -1,0 +1,13 @@
+<Pop3Retriever>
+ <Account>
+  <Host>example.com</Host>
+  <Port>995/110</Port>
+  <User>foo</User>
+  <Password>bar</Password>
+  <TargetFolder>INBOX</TargetFolder>
+  <!-- optionally you can specify a DateTime pattern to group mails by month/day/...  pattern below will put files in i.e. my/mail/folder/200701.mbox -->
+ <!-- <StorePattern>yyyyMM</StorePattern> -->
+  <DaysOnServer>-1</DaysOnServer>
+  <UseSsl>yes/no</UseSsl>
+ </Account>
+</Pop3Retriever>
