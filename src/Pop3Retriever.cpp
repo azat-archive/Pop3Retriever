@@ -46,15 +46,10 @@ Pop3RetrieveAccount Pop3RetrieveConfig::parseAccountElement(QDomElement& account
 	acc.daysOnServer = el.text().toInt();
 
 	el = account.firstChildElement("UseSsl");
-	QString canonicalValue = getCanonicalValue(el);
-	acc.useSsl = (canonicalValue == "true" || canonicalValue == "y" || canonicalValue == "yes" || canonicalValue == "1");
+	acc.useSsl = toBool(getCanonicalValue(el));
 
-	// TODO: refactoring
-	{
-		el = account.firstChildElement("IgnoreRFC1939");
-		QString canonicalValue = getCanonicalValue(el);
-		acc.ignoreRFC1939 = (canonicalValue == "true" || canonicalValue == "y" || canonicalValue == "yes" || canonicalValue == "1");
-	}
+	el = account.firstChildElement("IgnoreRFC1939");
+	acc.ignoreRFC1939 = toBool(getCanonicalValue(el));
 
 	return acc;
 }

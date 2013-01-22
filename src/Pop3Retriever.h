@@ -35,6 +35,10 @@ class Pop3RetrieveConfig
 		{
 			return getCanonicalValue(el.text());
 		}
+		static bool toBool(const QString& val)
+		{
+			return (val == "true" || val == "y" || val == "yes" || val == "1");
+		}
 	public:
 		bool LoadFromFile(QString filename);
 		bool SaveToFile(QString filename);
