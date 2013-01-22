@@ -32,6 +32,7 @@ class Pop3Client
 		Pop3ConnectionState state;
 		bool readOnly;
 		bool useSsl;
+		bool ignoreRFC1939;
 		
 		
 		QString doCommand(QString command,bool isMultiline);
@@ -44,7 +45,7 @@ class Pop3Client
 	protected:
 	
 	public:
-		Pop3Client(bool readOnly = true, bool useSsl = false);
+		Pop3Client(bool readOnly = true, bool useSsl = false, bool ignoreRFC1939 = true);
 		void SetReadOnly(bool readOnly);
 		bool Connect(QString host="localhost",short unsigned  port=110);
 		bool Login(QString user, QString pwd);

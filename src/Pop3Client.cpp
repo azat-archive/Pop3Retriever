@@ -3,10 +3,11 @@
 #include <QtDebug>
 
 #define _ERROR(s) std::cerr << s << m_sock->errorString().toStdString() << std::endl
-Pop3Client::Pop3Client(bool readOnly, bool useSsl)
+Pop3Client::Pop3Client(bool readOnly, bool useSsl, bool ignoreRFC1939)
 {
 	this->readOnly = readOnly;
 	this->useSsl = useSsl;
+	this->ignoreRFC1939 = ignoreRFC1939; // according to RFC1939 the response can only be 512 chars
 	state = NotConnected;
 
 	m_sock = (useSsl ? new QSslSocket : new QTcpSocket);
@@ -68,8 +69,18 @@ bool Pop3Client::ReadResponse(bool isMultiline,QString& response)
 //		qDebug() << "reading front\n";
 		if (offset >= (sizeof(buff)-1))
 		{
-			qDebug() << "avoiding buffer overflow, server is not RFC1939 compliant\n";
-			return false;
+			if (ignoreRFC1939)
+			{
+				qDebug() << "server is not RFC1939 compliant\n";
+
+				offset = 0;
+				response.append(buff);
+			}
+			else
+			{
+				qDebug() << "avoiding buffer overflow, server is not RFC1939 compliant\n";
+				return false;
+			}
 		}
 		qint64 bytesRead = m_sock->readLine(buff + offset,sizeof(buff)-offset);
 		if (bytesRead == -1)

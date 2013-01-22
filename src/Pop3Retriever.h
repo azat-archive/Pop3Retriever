@@ -15,6 +15,7 @@ typedef struct Pop3RetrieveAccount_t
 	QString storePattern;
 	int daysOnServer;
 	bool useSsl;
+	bool ignoreRFC1939;
 } Pop3RetrieveAccount;
 
 class Pop3RetrieveConfig

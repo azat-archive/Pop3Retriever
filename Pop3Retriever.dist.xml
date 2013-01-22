@@ -9,5 +9,6 @@
  <!-- <StorePattern>yyyyMM</StorePattern> -->
   <DaysOnServer>-1</DaysOnServer>
   <UseSsl>yes/no</UseSsl>
+  <IgnoreRFC1939>yes</IgnoreRFC1939>
  </Account>
 </Pop3Retriever>
