@@ -66,7 +66,7 @@ bool Pop3Client::ReadResponse(bool isMultiline,QString& response)
 	while (couldRead && !complete)
 	{
 //		qDebug() << "reading front\n";
-		if (offset >= sizeof(buff))
+		if (offset >= (sizeof(buff)-1))
 		{
 			qDebug() << "avoiding buffer overflow, server is not RFC1939 compliant\n";
 			return false;
