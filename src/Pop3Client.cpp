@@ -21,7 +21,7 @@ void Pop3Client::SetReadOnly(bool readOnly)
 
 bool Pop3Client::Connect(QString host,short unsigned int port)
 {
-	if (state == Authorization)
+	if (state != NotConnected)
 		return true;
 
 	if (this->useSsl)
